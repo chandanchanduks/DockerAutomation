@@ -1,0 +1,14 @@
+services:
+  device:
+    build:
+      context: ./Device/.
+    container_name: device_v1
+  
+  automation:
+    build:
+      context: ./Automation/.
+    container_name: automation_v1
+    depends_on: 
+      - device
+    volumes:
+      - ./automation_reports:/automation/reports/

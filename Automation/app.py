@@ -8,7 +8,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 # Creates: Automation/reports
 REPORT_DIR = os.path.join(BASE_DIR, "reports")
 os.makedirs(REPORT_DIR, exist_ok=True)
-
+print("Automation Started")
 for attempt in range(10):
     try:
         response = requests.get("http://device:5000/status")

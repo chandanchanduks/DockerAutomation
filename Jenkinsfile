@@ -29,7 +29,7 @@ pipeline {
         stage('Wait For Automation') {
             steps {
                 sh '''
-                    docker wait automation_v1
+                    docker wait $(docker compose ps -q automation)
                 '''
             }
         }
@@ -38,6 +38,20 @@ pipeline {
             steps {
                 sh '''
                     docker compose logs
+                '''
+            }
+        }
+        stage('Collect Reports') {
+            steps {
+                sh '''
+                echo "========== Copy Reports =========="
+
+                mkdir -p automation_reports
+
+                docker cp $(docker compose ps -q automation):/automation/reports/. automation_reports/
+
+                echo "========== Reports =========="
+                ls -R automation_reports
                 '''
             }
         }

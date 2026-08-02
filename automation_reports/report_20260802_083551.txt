@@ -1,0 +1,3 @@
+Automation Passed
+
+{'battery': 82, 'device': 'Android Emulator', 'wifi': 'Connected'}

@@ -28,9 +28,15 @@ pipeline {
 
         stage('Wait For Automation') {
             steps {
+                script {
+                    env.AUTOMATION_CID = sh(
+                        script: 'docker compose ps -aq automation',
+                        returnStdout: true
+                    ).trim()
+                }
+
                 sh '''
-                    CID=$(docker compose ps -aq automation)
-                    docker wait "$CID"
+                    docker wait "$AUTOMATION_CID"
                 '''
             }
         }
@@ -45,15 +51,17 @@ pipeline {
         stage('Collect Reports') {
             steps {
                 sh '''
-                echo "========== Copy Reports =========="
+                    mkdir -p automation_reports
 
-                CID=$(docker compose ps -aq automation)
-                mkdir -p automation_reports
-                docker cp "$CID":/automation/reports/. automation_reports/
+                    docker cp "$AUTOMATION_CID":/automation/reports/. automation_reports/
 
-                echo "========== Reports =========="
-                ls -R automation_reports
+                    ls -R automation_reports
                 '''
+            }
+        }
+        stage('Archive Reports') {
+            steps {
+                archiveArtifacts artifacts: 'automation_reports/**', fingerprint: true
             }
         }
 

@@ -29,7 +29,8 @@ pipeline {
         stage('Wait For Automation') {
             steps {
                 sh '''
-                    docker wait $(docker compose ps -q automation)
+                    CID=$(docker compose ps -aq automation)
+                    docker wait "$CID"
                 '''
             }
         }
@@ -46,9 +47,9 @@ pipeline {
                 sh '''
                 echo "========== Copy Reports =========="
 
+                CID=$(docker compose ps -aq automation)
                 mkdir -p automation_reports
-
-                docker cp $(docker compose ps -q automation):/automation/reports/. automation_reports/
+                docker cp "$CID":/automation/reports/. automation_reports/
 
                 echo "========== Reports =========="
                 ls -R automation_reports

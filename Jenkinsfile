@@ -3,6 +3,8 @@ pipeline {
 
     environment {
         PROJECT_NAME = "DockerAutomation"
+        CONTAINER_NAME="automation"
+        CONTAINER_REPORT_FOLDER="/automation/reports"
     }
 
     stages {
@@ -30,7 +32,7 @@ pipeline {
             steps {
                 script {
                     env.AUTOMATION_CID = sh(
-                        script: 'docker compose ps -aq automation',
+                        script: "docker compose ps -aq ${CONTAINER_NAME}",
                         returnStdout: true
                     ).trim()
                 }
@@ -53,7 +55,7 @@ pipeline {
                 sh '''
                     mkdir -p automation_reports
 
-                    docker cp "$AUTOMATION_CID":/automation/reports/. automation_reports/
+                    docker cp "$AUTOMATION_CID":${CONTAINER_REPORT_FOLDER}/. automation_reports/
 
                     ls -R automation_reports
                 '''

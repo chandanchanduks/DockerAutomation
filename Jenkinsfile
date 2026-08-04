@@ -1,5 +1,10 @@
 pipeline {
     agent any
+    parameters{
+        booleanParam(name:"BUILD_IMAGE",default:true,description:"build images if selected")
+        booleanParam(name:"CLEAN_UP",default:true,description:"will stop the compose at end by default")
+        choice(name:"ENVIRONMENT",choices:["PROD","DEV","QA"],description:"select the environment to run")
+    }
 
     environment {
         PROJECT_NAME = "DockerAutomation"
@@ -8,7 +13,19 @@ pipeline {
     }
 
     stages {
-
+        stage("Running Environment"){
+            steps{
+                script{
+                    if(params.ENVIRONMENT=="PROD"){
+                        echo "running on production server"
+                    }else if(params.ENVIRONMENT=="QA"){
+                        echo "running on QA environment"
+                    }else{
+                        echo "running on DEV environment"
+                    }
+                }
+            }
+        }
         stage('Checkout') {
             steps {
                 echo "===== Workspace ====="
@@ -21,13 +38,21 @@ pipeline {
 
         stage('Build Docker Images') {
             steps {
-                sh '''
+                script{
+                    if(params.BUILD_IMAGE):
+                    sh '''
                     docker compose down || true
                     docker compose up --build -d
-                '''
+                    '''
+                }else{
+                sh "docker compose up -d"
+                }
+                // sh '''
+                //     docker compose down || true
+                //     docker compose up --build -d
+                // '''
             }
         }
-
         stage('Wait For Automation') {
             steps {
                 script {
@@ -80,7 +105,13 @@ pipeline {
         }
 
         always {
-            sh 'docker compose down || true'
+            script{
+                if(params.CLEAN_UP){
+                sh "docker compose down || true"
+            }else{
+                echo "Skipping build cleanup"
+            }
+            }
         }
     }
 }

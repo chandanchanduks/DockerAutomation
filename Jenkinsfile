@@ -1,8 +1,8 @@
 pipeline {
     agent any
     parameters{
-        booleanParam(name:"BUILD_IMAGE",default:true,description:"build images if selected")
-        booleanParam(name:"CLEAN_UP",default:true,description:"will stop the compose at end by default")
+        booleanParam(name:"BUILD_IMAGE",defaultValue:true,description:"build images if selected")
+        booleanParam(name:"CLEAN_UP",defaultValue:true,description:"will stop the compose at end by default")
         choice(name:"ENVIRONMENT",choices:["PROD","DEV","QA"],description:"select the environment to run")
     }
 
@@ -15,13 +15,22 @@ pipeline {
     stages {
         stage("Running Environment"){
             steps{
-                script{
-                    if(params.ENVIRONMENT=="PROD"){
-                        echo "running on production server"
-                    }else if(params.ENVIRONMENT=="QA"){
-                        echo "running on QA environment"
-                    }else{
-                        echo "running on DEV environment"
+                script {
+                    switch (params.ENVIRONMENT) {
+                        case "PROD":
+                            echo "Running on Production"
+                            break
+
+                        case "QA":
+                            echo "Running on QA"
+                            break
+
+                        case "DEV":
+                            echo "Running on Development"
+                            break
+
+                        default:
+                            error "Unknown Environment"
                     }
                 }
             }
@@ -39,7 +48,7 @@ pipeline {
         stage('Build Docker Images') {
             steps {
                 script{
-                    if(params.BUILD_IMAGE):
+                    if(params.BUILD_IMAGE){
                     sh '''
                     docker compose down || true
                     docker compose up --build -d

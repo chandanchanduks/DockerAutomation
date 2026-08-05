@@ -77,16 +77,16 @@ pipeline {
 
                     if (params.BUILD_IMAGE) {
 
-                        sh '''
+                        sh """
                             docker compose down || true
                             TEST_SUITE=${params.TEST_SUITE} docker compose up --build -d
-                        '''
+                        """
 
                     } else {
 
-                        sh '''
+                        sh """
                             TEST_SUITE=${params.TEST_SUITE} docker compose up -d
-                        '''
+                        """
 
                     }
 

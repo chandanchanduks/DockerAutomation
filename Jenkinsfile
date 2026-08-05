@@ -31,6 +31,8 @@ pipeline {
         PROJECT_NAME = "DockerAutomation"
         CONTAINER_NAME = "automation"
         CONTAINER_REPORT_FOLDER = "/automation/reports"
+        TEST_SUITE = "${params.TEST_SUITE}"
+
     }
 
     stages {
@@ -79,13 +81,13 @@ pipeline {
 
                         sh """
                             docker compose down || true
-                            TEST_SUITE=${params.TEST_SUITE} docker compose up --build -d
+                            docker compose up --build -d
                         """
 
                     } else {
 
                         sh """
-                            TEST_SUITE=${params.TEST_SUITE} docker compose up -d
+                            docker compose up -d
                         """
 
                     }

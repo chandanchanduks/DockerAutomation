@@ -3,6 +3,25 @@ import time
 import requests
 from datetime import datetime
 
+import os
+
+suite = os.getenv("TEST_SUITE", "Smoke")
+
+print("=" * 50)
+print(f"Running Test Suite : {suite}")
+print("=" * 50)
+
+print("Automation Started...")
+
+if suite == "Smoke":
+    print("Running Smoke Tests")
+
+elif suite == "Regression":
+    print("Running Regression Tests")
+
+elif suite == "Sanity":
+    print("Running Sanity Tests")
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # Creates: Automation/reports

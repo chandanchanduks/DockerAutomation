@@ -19,6 +19,12 @@ pipeline {
             choices: ['DEV', 'QA', 'PROD'],
             description: 'Select execution environment'
         )
+        choice(
+        name: 'TEST_SUITE',
+        choices: ['Smoke','Regression','Sanity'],
+        description: 'Select Test Suite'
+    )
+
     }
 
     environment {
@@ -73,13 +79,13 @@ pipeline {
 
                         sh '''
                             docker compose down || true
-                            docker compose up --build -d
+                            TEST_SUITE=${params.TEST_SUITE} docker compose up --build -d
                         '''
 
                     } else {
 
                         sh '''
-                            docker compose up -d
+                            TEST_SUITE=${params.TEST_SUITE} docker compose up -d
                         '''
 
                     }

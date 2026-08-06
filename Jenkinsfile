@@ -32,7 +32,7 @@ pipeline {
         CONTAINER_NAME = "automation"
         CONTAINER_REPORT_FOLDER = "/automation/reports"
         TEST_SUITE = "${params.TEST_SUITE}"
-
+        IMAGE_TAG = "${BUILD_NUMBER}"
     }
 
     stages {
@@ -81,13 +81,13 @@ pipeline {
 
                         sh """
                             docker compose down || true
-                            docker compose up --build -d
+                            IMAGE_TAG=${IMAGE_TAG} docker compose up --build -d
                         """
 
                     } else {
 
                         sh """
-                            docker compose up -d
+                            IMAGE_TAG=${IMAGE_TAG} docker compose up -d
                         """
 
                     }
@@ -95,7 +95,45 @@ pipeline {
                 }
             }
         }
+        stage('Verify Images') {
+            steps {
+                sh '''
+                    docker image inspect dockerautomation-pipeline-automation:${IMAGE_TAG}
 
+                    docker image inspect dockerautomation-pipeline-device:${IMAGE_TAG}
+
+                    echo "Images Verified Successfully"
+                '''
+            }
+        }
+        stage('Tag Latest') {
+            steps {
+                sh '''
+                    docker tag \
+                    dockerautomation-pipeline-automation:${IMAGE_TAG} \
+                    dockerautomation-pipeline-automation:latest
+
+                    docker tag \
+                    dockerautomation-pipeline-device:${IMAGE_TAG} \
+                    dockerautomation-pipeline-device:latest
+                '''
+            }
+        }
+        stage('Verify Tags') {
+            steps {
+                sh '''
+                    docker image inspect dockerautomation-pipeline-automation:${IMAGE_TAG}
+
+                    docker image inspect dockerautomation-pipeline-automation:latest
+
+                    docker image inspect dockerautomation-pipeline-device:${IMAGE_TAG}
+
+                    docker image inspect dockerautomation-pipeline-device:latest
+
+                    echo "All tags verified."
+                '''
+            }
+        }
         stage('Wait For Automation Container') {
             steps {
 

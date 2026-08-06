@@ -1,0 +1,22 @@
+============================================================
+AUTOMATION REPORT
+============================================================
+
+Total  : 5
+Passed : 4
+Failed : 1
+
+============================================================
+PASS : LoginTest.test_login
+------------------------------------------------------------
+PASS : LoginTest.test_logout
+------------------------------------------------------------
+PASS : WifiTest.test_connect_wifi
+------------------------------------------------------------
+FAIL : WifiTest.test_disable_wifi
+
+Screenshot : /automation/artifacts/screenshots/WifiTest_test_disable_wifi_20260806_171933.png
+Log : /automation/artifacts/logs/WifiTest_test_disable_wifi_20260806_171933.txt
+------------------------------------------------------------
+PASS : WifiTest.test_enable_wifi
+------------------------------------------------------------

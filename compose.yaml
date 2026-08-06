@@ -1,11 +1,11 @@
 services:
   device:
-    image: dockerautomation-pipeline-device:${IMAGE_TAG}
+    image: chandankatterishashikumar/dockerautomation-pipeline:${IMAGE_TAG}
     build:
       context: ./Device/.
   
   automation:
-    image: dockerautomation-pipeline-automation:${IMAGE_TAG}
+    image: chandankatterishashikumar/dockerautomation-pipeline:${IMAGE_TAG}
     build:
       context: ./Automation/.
     depends_on: 

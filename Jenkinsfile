@@ -33,6 +33,8 @@ pipeline {
         CONTAINER_REPORT_FOLDER = "/automation/reports"
         TEST_SUITE = "${params.TEST_SUITE}"
         IMAGE_TAG = "${BUILD_NUMBER}"
+        DOCKER_USERNAME   = "chandankatterishashikumar"
+        DOCKER_REPOSITORY = "dockerautomation-pipeline"
     }
 
     stages {
@@ -205,6 +207,65 @@ pipeline {
                         --password-stdin
                     '''
                 }
+            }
+        }
+        stage('Retag Images') {
+            steps {
+                sh '''
+                    echo "===== Retagging Images ====="
+
+                    docker tag \
+                    dockerautomation-pipeline-automation:${IMAGE_TAG} \
+                    ${DOCKER_USERNAME}/${DOCKER_REPOSITORY}:${IMAGE_TAG}
+
+                    docker tag \
+                    dockerautomation-pipeline-automation:${IMAGE_TAG} \
+                    ${DOCKER_USERNAME}/${DOCKER_REPOSITORY}:latest
+                '''
+            }
+        }
+        stage('Verify Retag') {
+            steps {
+                sh '''
+                    echo "===== Verifying Tags ====="
+
+                    docker image inspect \
+                    ${DOCKER_USERNAME}/${DOCKER_REPOSITORY}:${IMAGE_TAG}
+
+                    docker image inspect \
+                    ${DOCKER_USERNAME}/${DOCKER_REPOSITORY}:latest
+
+                    echo "Retag Successful"
+                '''
+            }
+        }
+        stage('Push Version Image') {
+            steps {
+                sh '''
+                    echo "===== Pushing Version Image ====="
+
+                    ${DOCKER_USERNAME}/${DOCKER_REPOSITORY}:${IMAGE_TAG}
+                '''
+            }
+        }
+        stage('Push Latest Image') {
+            steps {
+                sh '''
+                    echo "===== Pushing Latest Image ====="
+
+                    ${DOCKER_USERNAME}/${DOCKER_REPOSITORY}:latest
+                '''
+            }
+        }
+        stage('Verify Push') {
+            steps {
+                sh '''
+                    echo "===== Verifying Docker Hub Image ====="
+
+                    docker pull ${DOCKER_USERNAME}/${DOCKER_REPOSITORY}:${IMAGE_TAG}
+
+                    echo "Image Successfully Pulled"
+                '''
             }
         }
 

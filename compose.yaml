@@ -1,14 +1,14 @@
 services:
   device:
-    image: chandankatterishashikumar/dockerautomation-pipeline:${IMAGE_TAG}
+    image: chandankatterishashikumar/dockerautomation-pipeline-device:${IMAGE_TAG}
     build:
-      context: ./Device/.
-  
+      context: ./Device
+
   automation:
-    image: chandankatterishashikumar/dockerautomation-pipeline:${IMAGE_TAG}
+    image: chandankatterishashikumar/dockerautomation-pipeline-automation:${IMAGE_TAG}
     build:
-      context: ./Automation/.
-    depends_on: 
+      context: ./Automation
+    depends_on:
       - device
     volumes:
-      - ./automation_reports:/automation/reports/
+      - ./automation_reports:/automation/reports

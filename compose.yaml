@@ -1,14 +1,22 @@
+version: "3.9"
+
 services:
+
   device:
-    image: chandankatterishashikumar/dockerautomation-pipeline-device:${IMAGE_TAG}
+    image: dockerautomation-pipeline-device:${IMAGE_TAG}
     build:
       context: ./Device
 
   automation:
-    image: chandankatterishashikumar/dockerautomation-pipeline-automation:${IMAGE_TAG}
+    image: dockerautomation-pipeline-automation:${IMAGE_TAG}
     build:
       context: ./Automation
+
     depends_on:
       - device
+
+    environment:
+      TEST_SUITE: ${TEST_SUITE}
+
     volumes:
       - ./automation_reports:/automation/reports
